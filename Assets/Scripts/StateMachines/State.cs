@@ -1,29 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class State
+namespace StateMachines
 {
-    public abstract void Enter();
-    public abstract void Tick(float deltaTime);
-    public abstract void Exit();
-    
-    protected float GetNormalizedTime(Animator animator, string tag)
+    public abstract class State
     {
-        AnimatorStateInfo currentInfo = animator.GetCurrentAnimatorStateInfo(0);
-        AnimatorStateInfo nextInfo = animator.GetNextAnimatorStateInfo(0);
+        public abstract void Enter();
+        public abstract void Tick(float deltaTime);
+        public abstract void Exit();
 
-        if (animator.IsInTransition(0) && nextInfo.IsTag(tag))
+        protected float GetNormalizedTime(Animator animator, string tag)
         {
-            return nextInfo.normalizedTime;
-        }
-        else if (!animator.IsInTransition(0) && currentInfo.IsTag(tag))
-        {
-            return currentInfo.normalizedTime;
-        }
-        else 
-        { 
-            return 0f; 
+            var currentInfo = animator.GetCurrentAnimatorStateInfo(0);
+            var nextInfo = animator.GetNextAnimatorStateInfo(0);
+
+            if (animator.IsInTransition(0) && nextInfo.IsTag(tag)) return nextInfo.normalizedTime;
+            if (!animator.IsInTransition(0) && currentInfo.IsTag(tag)) return currentInfo.normalizedTime;
+
+            return 0f;
         }
     }
 }

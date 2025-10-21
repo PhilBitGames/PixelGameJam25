@@ -4,7 +4,7 @@ public class Music : MonoBehaviour
 {
     private static Music instance;
 
-    void Awake()
+    private void Awake()
     {
         if (instance != null && instance != this)
         {

@@ -1,24 +1,25 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    private static GameManager instance;
     [SerializeField] private int startingLives;
     [SerializeField] private GameObject GameOverPanel;
     [SerializeField] private GameObject PausePanel;
     [SerializeField] private GameObject YouWinPanel;
     [SerializeField] private Castle playerCastle;
     [SerializeField] private Castle enemyCastle;
-    
-    [SerializeField] private TMPro.TMP_Text playerLivesText;
-    [SerializeField] private TMPro.TMP_Text enemyLivesText;
+
+    [SerializeField] private TMP_Text playerLivesText;
+    [SerializeField] private TMP_Text enemyLivesText;
+    private int enemyCurrentLives;
+    private bool isPlaying;
 
     private int playerCurrentLives;
-    private int enemyCurrentLives;
-    bool isPlaying;
-
-    private static GameManager instance;
 
     public int PlayerCurrentLives
     {
@@ -29,7 +30,7 @@ public class GameManager : MonoBehaviour
             playerLivesText.text = playerCurrentLives.ToString();
         }
     }
-    
+
     public int EnemyCurrentLives
     {
         get => enemyCurrentLives;
@@ -39,32 +40,30 @@ public class GameManager : MonoBehaviour
             enemyLivesText.text = enemyCurrentLives.ToString();
         }
     }
-    
+
     public static GameManager Instance
     {
         get
         {
-            if (instance == null)
-            {
-                Debug.LogError("GameManager is NULL");
-            }
+            if (instance == null) Debug.LogError("GameManager is NULL");
             return instance;
         }
     }
+
     private void Awake()
     {
+        instance = this;
         isPlaying = true;
         PlayerCurrentLives = startingLives;
         EnemyCurrentLives = startingLives;
-        instance = this;
-        
-        playerCastle.OnCastleAttacked += PlayerLoseLife;
-        enemyCastle.OnCastleAttacked += EnemyLoseLife;
+
+        playerCastle.OnCastleAttacked += OnCastleAttacked;
+        enemyCastle.OnCastleAttacked += OnCastleAttacked;
     }
 
     private void Update()
     {
-        if(Keyboard.current.escapeKey.wasPressedThisFrame)
+        if (Keyboard.current.escapeKey.wasPressedThisFrame)
         {
             isPlaying = !isPlaying;
             PausePanel.SetActive(!PausePanel.activeSelf);
@@ -72,40 +71,43 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void PlayerLoseLife(object sender, EventArgs e)
+    private void OnDestroy()
     {
-        PlayerCurrentLives--;
+        if (playerCastle != null) playerCastle.OnCastleAttacked -= OnCastleAttacked;
+        if (enemyCastle != null) enemyCastle.OnCastleAttacked -= OnCastleAttacked;
+    }
 
-        if (PlayerCurrentLives <= 0)
+    private void OnCastleAttacked(object sender, EventArgs e)
+    {
+        if (ReferenceEquals(sender, playerCastle))
         {
-            isPlaying = false;
-            GameOverPanel.SetActive(true);
-            Time.timeScale = 0;
+            PlayerCurrentLives--;
+            if (PlayerCurrentLives <= 0) EndGame(GameOverPanel);
+        }
+        else if (ReferenceEquals(sender, enemyCastle))
+        {
+            EnemyCurrentLives--;
+            if (EnemyCurrentLives <= 0) EndGame(YouWinPanel);
         }
     }
 
-    private void EnemyLoseLife(object sender, EventArgs e)
+    private void EndGame(GameObject panel)
     {
-        EnemyCurrentLives--;
-
-        if (EnemyCurrentLives <= 0)
-        {
-            isPlaying = false;
-            YouWinPanel.SetActive(true);
-            Time.timeScale = 0;
-        }
+        isPlaying = false;
+        panel.SetActive(true);
+        Time.timeScale = 0;
     }
-    
+
     public void RestartScene()
     {
         Time.timeScale = 1;
-        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
-    
+
     public void MenuScene()
     {
         Time.timeScale = 1;
-        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+        SceneManager.LoadScene(0);
     }
 
     public bool IsPlaying()

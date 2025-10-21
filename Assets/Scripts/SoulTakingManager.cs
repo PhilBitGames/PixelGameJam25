@@ -1,11 +1,10 @@
-using Combat;
 using UnityEngine;
 
 public class SoulTakingManager : MonoBehaviour
 {
     [SerializeField] private MouseManager mouseManager;
     [SerializeField] private UnitCreationManager unitCreationManager;
-    
+
     private void Start()
     {
         mouseManager.OnUnitClicked += HandleSoulTaken;
@@ -13,6 +12,6 @@ public class SoulTakingManager : MonoBehaviour
 
     private void HandleSoulTaken(object sender, SelectableUnit selectableUnit)
     {
-        unitCreationManager.AddSoul(selectableUnit.UnitType );
+        unitCreationManager.AddSoul(selectableUnit.UnitType);
     }
 }

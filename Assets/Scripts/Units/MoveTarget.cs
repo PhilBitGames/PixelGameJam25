@@ -7,6 +7,7 @@ namespace Units
     {
         [SerializeField] private float upScaleFactor = 1.5f;
         private int expectedUnitCount;
+
         public void SetExpectedUnitCount(int selectedUnitsCount)
         {
             expectedUnitCount = selectedUnitsCount;
@@ -16,19 +17,16 @@ namespace Units
         {
             transform.localScale *= upScaleFactor;
         }
-        
+
         public void DisregardUnit(UnitStateMachine unitStateMachine)
         {
             expectedUnitCount--;
             DestroyOnNoMoreUnits();
         }
-        
+
         public void DestroyOnNoMoreUnits()
         {
-            if (expectedUnitCount <= 0)
-            {
-                Destroy(gameObject);
-            }
+            if (expectedUnitCount <= 0) Destroy(gameObject);
         }
     }
 }

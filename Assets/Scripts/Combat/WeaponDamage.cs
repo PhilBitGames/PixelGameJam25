@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class WeaponDamage : MonoBehaviour
@@ -17,15 +15,12 @@ public class WeaponDamage : MonoBehaviour
 
     public void DealDamageToTarget()
     {
-        if (!targetHealth.IsDead)
-        {
-            targetHealth.DealDamage(damage);
-        }
+        if (!targetHealth.IsDead) targetHealth.DealDamage(damage);
     }
-    
+
     public void SetAttack(int damage, Target target)
     {
-        this.targetHealth = target.GetComponent<Health>();
+        targetHealth = target.GetComponent<Health>();
         this.damage = damage;
     }
 }

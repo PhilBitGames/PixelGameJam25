@@ -4,7 +4,7 @@ public class UnitSpawnAreaManager : MonoBehaviour
 {
     [SerializeField] private MouseManager mouseManager;
     [SerializeField] private UnitCreationManager unitCreationManager;
-    
+
     private void Start()
     {
         mouseManager.OnSpawnAreaClicked += HandleSpawnAreaClicked;

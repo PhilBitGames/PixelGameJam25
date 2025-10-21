@@ -1,28 +1,26 @@
-using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class EnemySpawner : MonoBehaviour
 {
-    [SerializeField] GameObject soldierPrefab;
-    [SerializeField] GameObject archerPrefab;
-    [SerializeField] GameObject EnemyContainer;
-    [SerializeField] Transform SpawnArea;
+    [SerializeField] private GameObject soldierPrefab;
+    [SerializeField] private GameObject archerPrefab;
+    [SerializeField] private GameObject EnemyContainer;
+    [SerializeField] private Transform SpawnArea;
 
-    [SerializeField] float startSpawnInterval = 4f;
-    [SerializeField] float endSpawnInterval = 1f;
-    [SerializeField] float SpawnIntervalDecreaseIncrement = 0.1f;
-    
-    float timer = 0;
+    [SerializeField] private float startSpawnInterval = 4f;
+    [SerializeField] private float endSpawnInterval = 1f;
+    [SerializeField] private float SpawnIntervalDecreaseIncrement = 0.1f;
     private float currentSpawnInterval = 4f;
+    private float spawnAreaBottom;
 
     private float spawnAreaLeft;
     private float spawnAreaRight;
     private float spawnAreaTop;
-    private float spawnAreaBottom;
 
-    private GameObject[] units; 
+    private float timer;
+
+    private GameObject[] units;
 
     private void Awake()
     {
@@ -31,7 +29,7 @@ public class EnemySpawner : MonoBehaviour
         spawnAreaTop = SpawnArea.position.y + SpawnArea.localScale.y / 2;
         spawnAreaBottom = SpawnArea.position.y - SpawnArea.localScale.y / 2;
         currentSpawnInterval = startSpawnInterval;
-        units = new []{ soldierPrefab, archerPrefab };
+        units = new[] { soldierPrefab, archerPrefab };
     }
 
     private void Update()
@@ -40,25 +38,20 @@ public class EnemySpawner : MonoBehaviour
         if (timer >= currentSpawnInterval)
         {
             currentSpawnInterval -= SpawnIntervalDecreaseIncrement;
-            if (currentSpawnInterval < endSpawnInterval)
-            {
-                currentSpawnInterval = endSpawnInterval;
-            }
-        
+            if (currentSpawnInterval < endSpawnInterval) currentSpawnInterval = endSpawnInterval;
+
             SpawnEnemy();
             timer = 0;
-            
-            // if()
         }
     }
 
     private void SpawnEnemy()
     {
-        Vector3 spawnPosition = new Vector3(
-            UnityEngine.Random.Range(spawnAreaLeft, spawnAreaRight),
-            UnityEngine.Random.Range(spawnAreaBottom, spawnAreaTop),
+        var spawnPosition = new Vector3(
+            Random.Range(spawnAreaLeft, spawnAreaRight),
+            Random.Range(spawnAreaBottom, spawnAreaTop),
             0f
         );
-        Instantiate(units[Random.Range(0,units.Length)], spawnPosition, Quaternion.identity, EnemyContainer.transform);
+        Instantiate(units[Random.Range(0, units.Length)], spawnPosition, Quaternion.identity, EnemyContainer.transform);
     }
 }

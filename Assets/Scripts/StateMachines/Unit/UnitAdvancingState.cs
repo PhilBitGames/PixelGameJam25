@@ -4,12 +4,14 @@ namespace StateMachines.Unit
 {
     public class UnitAdvancingState : UnitBaseState
     {
-        private const float CrossFadeDuration = 0.1f;
-        private const float AnimatorDampTime = 0.1f;
-
         private readonly int RunningHash = Animator.StringToHash("Running");
 
-        public UnitAdvancingState(UnitStateMachine stateMachine) : base(stateMachine) { }
+        private float targetCheckTimer = 0f;
+        private const float TargetCheckInterval = 0.25f;
+        
+        public UnitAdvancingState(UnitStateMachine stateMachine) : base(stateMachine)
+        {
+        }
 
         public override void Enter()
         {
@@ -19,18 +21,17 @@ namespace StateMachines.Unit
         public override void Tick(float deltaTime)
         {
             Move(stateMachine.AdvancingDirection * stateMachine.MovementSpeed, deltaTime);
-        
+
+            targetCheckTimer -= deltaTime;
+            if (targetCheckTimer > 0f) {return;}
+            
+            targetCheckTimer = TargetCheckInterval;
             if (stateMachine.Targeter.SelectClosestTarget(stateMachine.OtherFaction))
-            {
                 stateMachine.SwitchState(new UnitChasingState(stateMachine));
-            }
-        
-            //stateMachine.Animator.SetFloat(SpeedHash, 0, 0.1f, deltaTime);
         }
 
         public override void Exit()
         {
-        
         }
     }
 }
