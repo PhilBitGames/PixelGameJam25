@@ -13,10 +13,10 @@ public class UnitCreationManager : MonoBehaviour
     [SerializeField] private GameObject undeadArcherPrefab;
     [SerializeField] private Image soliderSelectedImage;
     [SerializeField] private Image archerSelectedImage;
-    private readonly int archerSoulsCount = 3;
 
     private UnitType currentTypeSelected;
-
+    
+    private readonly int archerSoulsCount = 3;
     private readonly int soldierSoulsCount = 3;
 
     private Dictionary<UnitType, UnitTypeProperties> unitTypeToPrefab = new();
