@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    private static GameManager instance;
     [SerializeField] private int startingLives;
     [SerializeField] private GameObject GameOverPanel;
     [SerializeField] private GameObject PausePanel;
@@ -41,18 +40,8 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public static GameManager Instance
-    {
-        get
-        {
-            if (instance == null) Debug.LogError("GameManager is NULL");
-            return instance;
-        }
-    }
-
     private void Awake()
     {
-        instance = this;
         isPlaying = true;
         PlayerCurrentLives = startingLives;
         EnemyCurrentLives = startingLives;
@@ -108,10 +97,5 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1;
         SceneManager.LoadScene(0);
-    }
-
-    public bool IsPlaying()
-    {
-        return isPlaying;
     }
 }
