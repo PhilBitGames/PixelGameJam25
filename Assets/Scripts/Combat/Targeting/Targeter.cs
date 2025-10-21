@@ -11,11 +11,6 @@ namespace Combat.Targeting
         private readonly List<Target> targets = new();
         public Target CurrentTarget { get; private set; }
 
-        private void Awake()
-        {
-            GetComponent<CircleCollider2D>().radius = stateMachine.ChasingRange;
-        }
-
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (other.TryGetComponent(out Target target))
@@ -31,6 +26,11 @@ namespace Combat.Targeting
             if (!other.TryGetComponent(out Target target)) return;
 
             RemoveTarget(target);
+        }
+
+        public void InitializeCollider()
+        {
+            GetComponent<CircleCollider2D>().radius = stateMachine.ChasingRange;
         }
 
         public bool SelectClosestTarget(Faction faction)

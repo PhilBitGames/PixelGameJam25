@@ -4,11 +4,11 @@ namespace StateMachines.Unit
 {
     public class UnitAdvancingState : UnitBaseState
     {
+        private const float TargetCheckInterval = 0.25f;
         private readonly int RunningHash = Animator.StringToHash("Running");
 
-        private float targetCheckTimer = 0f;
-        private const float TargetCheckInterval = 0.25f;
-        
+        private float targetCheckTimer;
+
         public UnitAdvancingState(UnitStateMachine stateMachine) : base(stateMachine)
         {
         }
@@ -23,8 +23,8 @@ namespace StateMachines.Unit
             Move(stateMachine.AdvancingDirection * stateMachine.MovementSpeed, deltaTime);
 
             targetCheckTimer -= deltaTime;
-            if (targetCheckTimer > 0f) {return;}
-            
+            if (targetCheckTimer > 0f) return;
+
             targetCheckTimer = TargetCheckInterval;
             if (stateMachine.Targeter.SelectClosestTarget(stateMachine.OtherFaction))
                 stateMachine.SwitchState(new UnitChasingState(stateMachine));

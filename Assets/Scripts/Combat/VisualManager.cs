@@ -39,7 +39,7 @@ namespace Combat
                 yield return null;
             }
 
-            spriteRenderer.color = originalColor; // Reset to original color
+            spriteRenderer.color = originalColor;
         }
     }
 }

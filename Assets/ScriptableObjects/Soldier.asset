@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b049eacbf8c49bfbda6d356df44c078, type: 3}
+  m_Name: Soldier
+  m_EditorClassIdentifier: 
+  id: Soldier
+  enemyPrefab: {fileID: 8590959768879976911, guid: 1e952aa9df2859f4cab62f6b6a040d01, type: 3}
+  undeadPrefab: {fileID: 3394960968103923323, guid: a9075dc420737594ea864adad278575f, type: 3}
+  deadPrefab: {fileID: 8590959768879976911, guid: 8c43711deb5efb849ab6804d151fdfbb, type: 3}
+  movementSpeed: 1
+  attackDamage: 20
+  attackDamageVariance: 5
+  chasingRange: 3
+  attackRange: 1
+  icon: {fileID: 1699758113, guid: 2e1a0c21b9505a04881a1095b87747a2, type: 3}
+  startingSoulCount: 3

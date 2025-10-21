@@ -1,10 +1,11 @@
+using System.Collections.Generic;
+using Combat;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class EnemySpawner : MonoBehaviour
 {
-    [SerializeField] private GameObject soldierPrefab;
-    [SerializeField] private GameObject archerPrefab;
+    [SerializeField] private UnitFactory UnitFactory;
     [SerializeField] private GameObject EnemyContainer;
     [SerializeField] private Transform SpawnArea;
 
@@ -20,7 +21,7 @@ public class EnemySpawner : MonoBehaviour
 
     private float timer;
 
-    private GameObject[] units;
+    private readonly List<string> unitIds = new();
 
     private void Awake()
     {
@@ -29,7 +30,9 @@ public class EnemySpawner : MonoBehaviour
         spawnAreaTop = SpawnArea.position.y + SpawnArea.localScale.y / 2;
         spawnAreaBottom = SpawnArea.position.y - SpawnArea.localScale.y / 2;
         currentSpawnInterval = startSpawnInterval;
-        units = new[] { soldierPrefab, archerPrefab };
+        foreach (var unitDefinition in UnitFactory.GetUnitDefinitions())
+            if (unitDefinition.enemyPrefab != null)
+                unitIds.Add(unitDefinition.id);
     }
 
     private void Update()
@@ -52,6 +55,9 @@ public class EnemySpawner : MonoBehaviour
             Random.Range(spawnAreaBottom, spawnAreaTop),
             0f
         );
-        Instantiate(units[Random.Range(0, units.Length)], spawnPosition, Quaternion.identity, EnemyContainer.transform);
+
+        var enemyGameObject =
+            UnitFactory.CreateUnit(unitIds[Random.Range(0, unitIds.Count)], spawnPosition, Faction.Enemy);
+        enemyGameObject.transform.SetParent(EnemyContainer.transform);
     }
 }

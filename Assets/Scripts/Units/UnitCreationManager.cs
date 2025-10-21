@@ -1,87 +1,85 @@
 using System.Collections.Generic;
+using System.Linq;
 using Combat;
-using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UI;
 
 public class UnitCreationManager : MonoBehaviour
 {
-    [SerializeField] private TMP_Text soldierCountText;
-    [SerializeField] private TMP_Text archerCountText;
-    [SerializeField] private GameObject undeadSoldierPrefab;
-    [SerializeField] private GameObject undeadArcherPrefab;
-    [SerializeField] private Image soliderSelectedImage;
-    [SerializeField] private Image archerSelectedImage;
+    [SerializeField] private UnitFactory unitFactory;
+    [SerializeField] private Transform UnitPanel;
+    [SerializeField] private GameObject UnitPanelElementPrefab;
 
-    private UnitType currentTypeSelected;
-    
-    private readonly int archerSoulsCount = 3;
-    private readonly int soldierSoulsCount = 3;
+    private string currentUnitTypeSelected;
 
-    private Dictionary<UnitType, UnitTypeProperties> unitTypeToPrefab = new();
+    private readonly Dictionary<string, UnitTypeSelectionProperties> unitTypeToUnitTypeSelectionProperties = new();
 
     private void Awake()
     {
-        unitTypeToPrefab = new Dictionary<UnitType, UnitTypeProperties>
+        foreach (var unitDefinition in unitFactory.GetUnitDefinitions())
         {
-            { UnitType.Soldier, new UnitTypeProperties { prefab = undeadSoldierPrefab, text = soldierCountText } },
-            { UnitType.Archer, new UnitTypeProperties { prefab = undeadArcherPrefab, text = archerCountText } }
-        };
+            var unitPanelElementPrefab = Instantiate(UnitPanelElementPrefab, UnitPanel);
+            unitPanelElementPrefab.GetComponent<UnitSelectionPanel>().Initialize(unitDefinition.icon, unitDefinition,
+                () => SetCurrentTypeSelected(unitDefinition.id));
 
-        unitTypeToPrefab[UnitType.Soldier].SoulsCount = soldierSoulsCount;
-        unitTypeToPrefab[UnitType.Archer].SoulsCount = archerSoulsCount;
+            var unitTypeSelectionProperties = new UnitTypeSelectionProperties(unitDefinition.startingSoulCount,
+                unitPanelElementPrefab.GetComponent<UnitSelectionPanel>());
+            unitTypeToUnitTypeSelectionProperties.Add(unitDefinition.id, unitTypeSelectionProperties);
+        }
+
+        currentUnitTypeSelected = unitTypeToUnitTypeSelectionProperties.First().Key;
+        SetCurrentTypeSelected(currentUnitTypeSelected);
     }
 
     private void Update()
     {
         if (Keyboard.current.spaceKey.wasPressedThisFrame)
-            SetCurrentTypeSelected(currentTypeSelected == UnitType.Soldier ? UnitType.Archer : UnitType.Soldier);
-    }
-
-    public void SetCurrentTypeSelectedWrapper(int unitTypeIndex)
-    {
-        SetCurrentTypeSelected((UnitType)unitTypeIndex);
+        {
+            var keys = unitTypeToUnitTypeSelectionProperties.Keys.ToList();
+            var currentUnitIndex = keys.IndexOf(currentUnitTypeSelected);
+            var nextIndex = (currentUnitIndex + 1) % keys.Count;
+            SetCurrentTypeSelected(keys[nextIndex]);
+        }
     }
 
 
     public void CreateUnit(Vector2 mousePosition)
     {
-        var unitTypeProperties = unitTypeToPrefab[currentTypeSelected];
+        var unitTypeProperties = unitTypeToUnitTypeSelectionProperties[currentUnitTypeSelected];
 
         if (unitTypeProperties.SoulsCount <= 0) return;
 
-        Instantiate(unitTypeProperties.prefab, mousePosition, Quaternion.identity);
+        unitFactory.CreateUnit(currentUnitTypeSelected, mousePosition, Faction.Player);
         unitTypeProperties.SoulsCount--;
         GetComponent<AudioSource>().Play();
     }
 
-    public void AddSoul(UnitType selectableUnitUnitType)
+    public void AddSoul(string unitType)
     {
-        unitTypeToPrefab[selectableUnitUnitType].SoulsCount++;
+        unitTypeToUnitTypeSelectionProperties[unitType].SoulsCount++;
     }
 
-    private void SetCurrentTypeSelected(UnitType unitType)
+    private void SetCurrentTypeSelected(string unitType)
     {
-        currentTypeSelected = unitType;
-        switch (currentTypeSelected)
+        currentUnitTypeSelected = unitType;
+        foreach (var keyValuePair in unitTypeToUnitTypeSelectionProperties)
         {
-            case UnitType.Soldier:
-                soliderSelectedImage.enabled = true;
-                archerSelectedImage.enabled = false;
-                break;
-            case UnitType.Archer:
-                archerSelectedImage.enabled = true;
-                soliderSelectedImage.enabled = false;
-                break;
+            var type = keyValuePair.Key;
+            var properties = keyValuePair.Value;
+            properties.unitSelectionPanel.SetSelected(type == currentUnitTypeSelected);
         }
     }
 
-    private class UnitTypeProperties
+    private class UnitTypeSelectionProperties
     {
-        public GameObject prefab;
         private int soulsCount;
-        public TMP_Text text;
+        public readonly UnitSelectionPanel unitSelectionPanel;
+
+        public UnitTypeSelectionProperties(int initialSouls, UnitSelectionPanel unitSelectionPanel)
+        {
+            this.unitSelectionPanel = unitSelectionPanel;
+            SoulsCount = initialSouls;
+        }
 
         public int SoulsCount
         {
@@ -89,7 +87,7 @@ public class UnitCreationManager : MonoBehaviour
             set
             {
                 soulsCount = value;
-                if (text != null) text.text = soulsCount.ToString();
+                unitSelectionPanel.UpdateUnitCount(soulsCount);
             }
         }
     }

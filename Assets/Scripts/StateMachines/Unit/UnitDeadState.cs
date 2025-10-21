@@ -12,10 +12,11 @@ public class UnitDeadState : UnitBaseState
     {
         if (stateMachine.Faction == Faction.Enemy)
         {
-            var dead = Object.Instantiate(stateMachine.DeadPrefab, stateMachine.transform.position,
+            var deadGameObject = Object.Instantiate(stateMachine.DeadPrefab, stateMachine.transform.position,
                 Quaternion.identity);
-            dead.GetComponentInChildren<SpriteRenderer>().flipX =
+            deadGameObject.GetComponentInChildren<SpriteRenderer>().flipX =
                 stateMachine.Visual.GetComponent<SpriteRenderer>().flipX;
+            deadGameObject.GetComponent<SelectableUnit>().UnitType = stateMachine.UnitDefinition.id;
         }
 
         stateMachine.DestroyThis();

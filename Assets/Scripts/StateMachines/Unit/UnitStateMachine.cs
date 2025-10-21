@@ -16,19 +16,21 @@ namespace StateMachines.Unit
 
         [field: SerializeField] public Targeter Targeter { get; private set; }
 
-        [field: SerializeField] public float MovementSpeed { get; private set; }
-
-        [field: SerializeField] public float ChasingRange { get; private set; }
-
-        [field: SerializeField] public float AttackRange { get; private set; }
-
-        [field: SerializeField] public int AttackDamage { get; private set; }
-
-        [field: SerializeField] public int AttackDamageVariance { get; private set; }
-
-        [field: SerializeField] public GameObject DeadPrefab { get; private set; }
-
         [field: SerializeField] public GameObject Visual { get; private set; }
+
+        public float MovementSpeed { get; private set; }
+
+        public float ChasingRange { get; private set; }
+
+        public float AttackRange { get; private set; }
+
+        public int AttackDamage { get; private set; }
+
+        public int AttackDamageVariance { get; private set; }
+
+        public GameObject DeadPrefab { get; private set; }
+
+        public UnitDefinition UnitDefinition { get; private set; }
 
         public Vector3 AdvancingDirection { get; private set; }
 
@@ -67,6 +69,18 @@ namespace StateMachines.Unit
                 castle.UnitAttackedCastle();
                 DestroyThis();
             }
+        }
+
+        public void Initialize(UnitDefinition def)
+        {
+            UnitDefinition = def;
+            MovementSpeed = def.movementSpeed;
+            ChasingRange = def.chasingRange;
+            AttackRange = def.attackRange;
+            AttackDamage = def.attackDamage;
+            AttackDamageVariance = def.attackDamageVariance;
+            DeadPrefab = def.deadPrefab;
+            Targeter.InitializeCollider();
         }
 
         private void HandleDie()

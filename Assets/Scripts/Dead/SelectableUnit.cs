@@ -1,10 +1,10 @@
-using Combat;
 using UnityEngine;
 
 public class SelectableUnit : MonoBehaviour
 {
-    public GameObject SelectionMarker;
-    [SerializeField] public UnitType UnitType;
+    [SerializeField] private GameObject SelectionMarker;
+
+    public string UnitType;
 
     public void SelectMe()
     {
