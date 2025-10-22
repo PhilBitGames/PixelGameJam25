@@ -80,7 +80,7 @@ namespace StateMachines.Unit
             AttackDamage = def.attackDamage;
             AttackDamageVariance = def.attackDamageVariance;
             DeadPrefab = def.deadPrefab;
-            Targeter.InitializeCollider();
+            Targeter.InitializeCollider(ChasingRange);
         }
 
         private void HandleDie()

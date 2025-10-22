@@ -5,7 +5,6 @@ using UnityEngine.UI;
 public class Health : MonoBehaviour
 {
     [SerializeField] private int maxHealth = 100;
-
     [SerializeField] private Slider HealthBar;
 
     private int health;
@@ -32,7 +31,7 @@ public class Health : MonoBehaviour
         {
             health = 0;
             OnDie?.Invoke();
-            HealthBar.gameObject.SetActive(false);
+            HealthBar?.gameObject.SetActive(false);
         }
     }
 

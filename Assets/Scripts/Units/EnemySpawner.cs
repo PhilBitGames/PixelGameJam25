@@ -12,9 +12,10 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private float startSpawnInterval = 4f;
     [SerializeField] private float endSpawnInterval = 1f;
     [SerializeField] private float SpawnIntervalDecreaseIncrement = 0.1f;
+    
     private float currentSpawnInterval = 4f;
+    
     private float spawnAreaBottom;
-
     private float spawnAreaLeft;
     private float spawnAreaRight;
     private float spawnAreaTop;
@@ -31,8 +32,12 @@ public class EnemySpawner : MonoBehaviour
         spawnAreaBottom = SpawnArea.position.y - SpawnArea.localScale.y / 2;
         currentSpawnInterval = startSpawnInterval;
         foreach (var unitDefinition in UnitFactory.GetUnitDefinitions())
+        {
             if (unitDefinition.enemyPrefab != null)
+            {
                 unitIds.Add(unitDefinition.id);
+            }
+        }
     }
 
     private void Update()

@@ -16,9 +16,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TMP_Text playerLivesText;
     [SerializeField] private TMP_Text enemyLivesText;
     private int enemyCurrentLives;
+    private int playerCurrentLives;
+
     private bool isPlaying;
 
-    private int playerCurrentLives;
 
     public int PlayerCurrentLives
     {
@@ -45,7 +46,10 @@ public class GameManager : MonoBehaviour
         isPlaying = true;
         PlayerCurrentLives = startingLives;
         EnemyCurrentLives = startingLives;
+    }
 
+    private void OnEnable()
+    {
         playerCastle.OnCastleAttacked += OnCastleAttacked;
         enemyCastle.OnCastleAttacked += OnCastleAttacked;
     }
@@ -71,12 +75,18 @@ public class GameManager : MonoBehaviour
         if (ReferenceEquals(sender, playerCastle))
         {
             PlayerCurrentLives--;
-            if (PlayerCurrentLives <= 0) EndGame(GameOverPanel);
+            if (PlayerCurrentLives <= 0)
+            {
+                EndGame(GameOverPanel);
+            }
         }
         else if (ReferenceEquals(sender, enemyCastle))
         {
             EnemyCurrentLives--;
-            if (EnemyCurrentLives <= 0) EndGame(YouWinPanel);
+            if (EnemyCurrentLives <= 0)
+            {
+                EndGame(YouWinPanel);
+            }
         }
     }
 

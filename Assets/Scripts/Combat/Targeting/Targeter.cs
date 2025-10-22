@@ -6,16 +6,14 @@ namespace Combat.Targeting
 {
     public class Targeter : MonoBehaviour
     {
-        [SerializeField] private UnitStateMachine stateMachine;
-
-        private readonly List<Target> targets = new();
+        private readonly List<Target> potentialTargets = new();
         public Target CurrentTarget { get; private set; }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (other.TryGetComponent(out Target target))
             {
-                targets.Add(target);
+                potentialTargets.Add(target);
                 target.OnDestroyed += RemoveTarget;
             }
         }
@@ -23,24 +21,25 @@ namespace Combat.Targeting
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            if (!other.TryGetComponent(out Target target)) return;
+            if (!other.TryGetComponent(out Target target)) { return; }
 
             RemoveTarget(target);
         }
 
-        public void InitializeCollider()
+        public void InitializeCollider(float radius)
         {
-            GetComponent<CircleCollider2D>().radius = stateMachine.ChasingRange;
+            GetComponent<CircleCollider2D>().radius = radius;
         }
 
+        
         public bool SelectClosestTarget(Faction faction)
         {
-            if (targets.Count == 0) return false;
+            if (potentialTargets.Count == 0) return false;
 
             Target closestTarget = null;
             var closestTargetDistance = Mathf.Infinity;
 
-            foreach (var target in targets)
+            foreach (var target in potentialTargets)
             {
                 if (target.GetComponent<UnitStateMachine>().Faction != faction ||
                     target.GetComponent<Health>().IsDead ||
@@ -70,7 +69,7 @@ namespace Combat.Targeting
             if (CurrentTarget == target) CurrentTarget = null;
 
             target.OnDestroyed -= RemoveTarget;
-            targets.Remove(target);
+            potentialTargets.Remove(target);
         }
     }
 }

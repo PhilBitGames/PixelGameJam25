@@ -1,18 +1,6 @@
 using UnityEngine;
 
-public class Music : MonoBehaviour
+public class Music : Singleton<Music>
 {
-    private static Music instance;
 
-    private void Awake()
-    {
-        if (instance != null && instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        instance = this;
-        DontDestroyOnLoad(gameObject);
-    }
 }

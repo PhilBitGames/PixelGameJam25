@@ -9,15 +9,15 @@ namespace Combat
         [SerializeField] private Health health;
         private readonly Color flashColor = Color.red;
 
-
         private void Awake()
         {
+            if (health == null) {return;}
             health.OnTakeDamage += FlashDamage;
-            health.OnDie += () => spriteRenderer.sortingOrder = 0;
         }
 
         private void OnDestroy()
         {
+            if (health == null) {return;}
             health.OnTakeDamage -= FlashDamage;
         }
 
@@ -28,6 +28,9 @@ namespace Combat
 
         private IEnumerator FlashRedOverTime(float duration)
         {
+            if(spriteRenderer == null)
+                yield break;
+            
             var elapsedTime = 0f;
             var originalColor = spriteRenderer.color;
 

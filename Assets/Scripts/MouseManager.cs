@@ -7,11 +7,11 @@ public class MouseManager : MonoBehaviour
     [SerializeField] private LayerMask deadUnitLayerMask;
     [SerializeField] private LayerMask spawnAreaLayerMask;
 
+    public EventHandler<Vector2> OnSpawnAreaClicked;
+    public EventHandler<SelectableUnit> OnUnitClicked;
+    
     private SelectableUnit hoveredUnit;
     private bool isHoveringOverSpawnArea;
-    public EventHandler<Vector2> OnSpawnAreaClicked;
-
-    public EventHandler<SelectableUnit> OnUnitClicked;
 
     private void Update()
     {
